@@ -8,7 +8,7 @@ function Header() {
     <>
       <section className="navbar">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-[10px]">
             <div className="lg:col-span-6 pb-0">
               <div className="logo">
                 <Link href="">
@@ -77,20 +77,32 @@ function Header() {
             </div>
           </div>
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-3 pb-3">
+            <div className="lg:col-span-5 pb-3">
               <div className="flex items-center gap-6">
+                <div>
+                  {/* <Image href="/assets/icon/nav.png" width={}/> */}
+                  <Link href="">
+                  <Image
+                      src="/assets/icon/nav.png"
+                      alt="Saudi Flag"
+                      width={10}
+                      height={8}
+                      className="w-[10px] h-[8px]"
+                    />
+                    </Link>
+                </div>
                  <div>
                   <p className="text-sm font-normal text-[#222222]">All categories</p>
                  </div>
                   <div>
-                  <p className="text-sm font-normal text-[#222222]">All categories</p>
+                  <p className="text-sm font-normal text-[#222222]">Featured selections</p>
                  </div>
                   <div>
-                  <p className="text-sm font-normal text-[#222222]">All categories</p>
+                  <p className="text-sm font-normal text-[#222222]">Order protections</p>
                  </div>
               </div>
             </div>
-            <div className="lg:col-span-9 pb-3">
+            <div className="lg:col-span-7 pb-3">
               <div className="flex items-center gap-6 float-right">
                  <div>
                   <p className="text-sm font-normal text-[#222222]">AI sourcing agent</p>
