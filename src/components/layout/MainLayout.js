@@ -1,12 +1,12 @@
-import Footer from "../shared/Footer";
-import Header from "../shared/Header";
+
+import Navbar from "../shared/Navbar";
 
 
 
 export default function MainLayout({ children }) {
   return (
     <>
-      {/* <Header /> */}
+      <Navbar />
       <main>{children}</main>
       {/* <Footer /> */}
     </>

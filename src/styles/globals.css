@@ -4,3 +4,10 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+.ERPCONN::-webkit-scrollbar {
+  display: none;
+}
+.ERPCONN {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

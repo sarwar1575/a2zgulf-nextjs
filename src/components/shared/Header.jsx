@@ -16,6 +16,7 @@ function Header() {
                     src="/assets/img/weblogo.png"
                     width={170}
                     height={170}
+                    alt=""
                   />
                 </Link>
               </div>
@@ -120,7 +121,7 @@ function Header() {
                   <p className="text-sm font-normal text-[#222222]">Become a supplier</p>
                  </div>
                   <div className="sign__in">
-                    <button className="text-sm font-semibold text-[#222222] bg-[#38CBFF] px-[30px] py-[5px] rounded-full">Become a supplier</button>
+                    <Link href='/supplierform' className="text-sm font-semibold text-[#222222] bg-[#38CBFF] px-[30px] py-[5px] rounded-full">Become a supplier</Link>
                 </div>
               </div>
             </div>

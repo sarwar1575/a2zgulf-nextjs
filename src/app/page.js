@@ -1,5 +1,6 @@
 import Home from "@/components/home/Home";
-import MainLayout from "@/components/layout/MainLayout";
+import HomeLayout from "@/components/layout/HomeLayout";
+
 
 
 
@@ -8,8 +9,8 @@ import MainLayout from "@/components/layout/MainLayout";
 export default async function HomePage() {
 
   return (
-     <MainLayout>
+     <HomeLayout>
         <Home />
-     </MainLayout>
+     </HomeLayout>
   );
 }
