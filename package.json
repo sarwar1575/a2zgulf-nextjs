@@ -11,9 +11,13 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.0.1",
     "@fortawesome/react-fontawesome": "^3.0.2",
+<<<<<<< HEAD
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.11.0",
     "js-cookie": "^3.0.5",
+=======
+    "axios": "^1.11.0",
+>>>>>>> 3d9eeeedaef226d7fb4e97aa8ecf0e11552e4ecb
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
