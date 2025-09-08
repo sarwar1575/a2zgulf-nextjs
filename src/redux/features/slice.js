@@ -1,6 +1,6 @@
 // src/store/slice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { registerUser, loginUser, fetchUserProfile } from '../lib/api';
+import { registerUser, loginUser, fetchUserProfile } from '../../lib/api';
 
 // Async thunk for user registration
 export const register = createAsyncThunk('auth/register', async (userData) => {
