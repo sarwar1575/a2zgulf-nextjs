@@ -3,7 +3,7 @@ import Image from "next/image";
 import businessData from "../../data/BusinessNeeds.json";
 
 function BusinessNeeds() {
-  console.log("data:", businessData);
+  
   return (
     <>
       <section className="businessNeeds bg-[#FFF5F7] py-[10px]">

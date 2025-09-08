@@ -1,11 +1,14 @@
-"use client";
-import { useState, useRef } from "react";
+'use client';  // This must be the first line
+
+import { useRef, useState } from "react"; // React hooks can only be used in client-side components
 import Image from "next/image";
 import FormBanner from "./FormBanner";
 import ERPDATA from "../../data/ERPCO.json";
 import Link from "next/link";
+import { useDispatch, useSelector } from 'react-redux';
+import { register, fetchProfile } from '../../store/slice';
 
-export default function From() {
+export default function Form() {
   const [selected, setSelected] = useState(null);
   const [step, setStep] = useState(1);
   const regRef = useRef(null);
@@ -17,6 +20,34 @@ export default function From() {
     { key: "vat", title: "VAT No", ref: vatRef },
     { key: "addr", title: "National Address *", ref: addrRef },
   ];
+
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle form submission (register user)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Dispatch the register action and log the response
+    dispatch(register(formData))
+      .then((response) => {
+        console.log('Registration successful, response:', response);
+      })
+      .catch((error) => {
+        console.error('Registration failed, error:', error);
+      });
+  };
 
   function goNext(e) {
     e.preventDefault();
