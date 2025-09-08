@@ -6,7 +6,7 @@ import ERPDATA from "../../data/ERPCO.json";
 import Link from "next/link";
 
 export default function From() {
-
+  const [selected, setSelected] = useState(null);
   const [step, setStep] = useState(1);
   const regRef = useRef(null);
   const vatRef = useRef(null);
@@ -66,7 +66,7 @@ export default function From() {
                         <input
                           type="text"
                           id="companyName"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -81,7 +81,7 @@ export default function From() {
                         <input
                           type="text"
                           id="companyReg"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -96,7 +96,7 @@ export default function From() {
                         <input
                           type="text"
                           id="vatNo"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -111,7 +111,7 @@ export default function From() {
                         <input
                           type="text"
                           id="nationalAddress"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter Name"
                         />
                         <label
@@ -126,7 +126,7 @@ export default function From() {
                         <input
                           type="tel"
                           id="phone"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="7100918890"
                         />
                         <label
@@ -141,7 +141,7 @@ export default function From() {
                         <input
                           type="email"
                           id="email"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -156,7 +156,7 @@ export default function From() {
                         <input
                           type="password"
                           id="password"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -171,7 +171,7 @@ export default function From() {
                         <input
                           type="password"
                           id="confirmPassword"
-                          className="peer w-full border border-[#cccc] rounded-lg px-5 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-medium placeholder:text-[#B7B7B7]"
+                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
                           placeholder="Enter"
                         />
                         <label
@@ -362,10 +362,12 @@ export default function From() {
                     <div className="ERPCONN grid grid-cols-4 gap-4 mb-6 overflow-y-scroll max-h-[300px] scrollbar-hide">
                       {ERPDATA.map((items, ind) => (
                         <div
-                          className="col-span-1 rounded-xl border-2 border-[#38CBFF] p-3 flex items-center justify-center "
                           key={ind}
+                          onClick={() => setSelected(ind)} 
+                          className={`col-span-1 rounded-xl border-2 p-3 flex items-center justify-center cursor-pointer 
+                           ${selected === ind ? "border-[#5570F1]" : "border-[#DDDDDD]"}`}
                         >
-                          <div className="">
+                          <div>
                             <Image
                               src={items.images}
                               alt="Zoho"
