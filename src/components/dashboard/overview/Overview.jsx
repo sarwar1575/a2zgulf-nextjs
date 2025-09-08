@@ -74,6 +74,7 @@ function Overview() {
             width={1424}
             height={14}
             className="w-[full] h-[373px]"
+            alt=""
           />
         </div>
       </div>

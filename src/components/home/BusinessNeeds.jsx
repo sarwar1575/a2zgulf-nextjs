@@ -52,6 +52,7 @@ function BusinessNeeds() {
                   width={17}
                   height={21}
                   className="w-[17px] h-[21px] text-center"
+                  alt=""
                 />
                 <p>{items.title}</p>
               </div>

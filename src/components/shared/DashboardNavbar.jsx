@@ -21,14 +21,12 @@ export default function DashboardNavbar() {
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <Link href="">
                 <Image
                   src="/assets/img/weblogo.png"
                   width={170}
                   height={170}
                   alt=""
                 />
-              </Link>
             </Link>
           </div>
 
@@ -53,6 +51,7 @@ export default function DashboardNavbar() {
                   width={15}
                   height={16}
                   className="w-[15px] h-[16px]"
+                  alt=""
                 />
               </Link>
             </div>
