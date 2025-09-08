@@ -43,7 +43,7 @@ export default function From() {
       <div className="suppliervalidation absolute left-1/2 top-30 -translate-x-1/2 w-full">
         <div className="container mx-auto">
           <div className="flex justify-center">
-            <div className="w-full md:w-1/2 lg:w-5/12 mx-auto pb-7">
+            <div className="w-full md:w-5/2 lg:w-6/12 mx-auto pb-7">
               <form
                 className="bg-[#ffffff] rounded-xl py-6 px-8 shadow-md"
                 onSubmit={(e) => {
@@ -55,10 +55,10 @@ export default function From() {
                 {/* STEP 1 (all original fields + uploads) */}
                 {step === 1 && (
                   <>
-                    <h6 className="text-[28px] font-semibold text-[#2B2F32] pb-4">
+                    <h6 className="text-[28px] font-semibold text-[#2B2F32] pb-4 text-center">
                       Become a supplier
                     </h6>
-                    <p className="text-[20px] font-semibold text-[#2B2F32]">
+                    <p className="text-[20px] font-semibold text-[#2B2F32] text-center pb-3">
                       Create a New Account
                     </p>
                     <div className="flex flex-wrap -mx-2">
