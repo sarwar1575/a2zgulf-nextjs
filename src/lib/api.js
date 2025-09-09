@@ -15,6 +15,16 @@ export const registerUser = async (userData) => {
   }
 };
 
+export const verifyOtp = async (tokenId, otp) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/verify/${tokenId}`, { otp });
+    return response.data;
+  } catch (error) {
+    console.error("OTP verification failed:", error);
+    throw error;
+  }
+};
+
 // Example function for login (POST /auth/login)
 export const loginUser = async (loginData) => {
   try {
