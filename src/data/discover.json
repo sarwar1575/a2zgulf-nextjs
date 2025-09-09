@@ -1,0 +1,64 @@
+{
+  "headline": "Discover your next business opportunity",
+
+  "topCategories": [
+    {
+      "title": "New Arrivals",
+      "items": [
+        { "img": "/assets/img/p1.png", "price": "Rs 2,126.96", "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 320.11",   "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 142.28",   "tag": "Trending Now" }
+        
+      ]
+    },
+    {
+      "title": "Top-ranking",
+      "items": [
+        { "img": "/assets/img/p1.png", "price": "Rs 2,126.96", "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 320.11",   "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 142.28",   "tag": "Trending Now" }
+        
+      ]
+    },
+    {
+      "title": "Personal Protective Equipment",
+      "items": [
+        { "img": "/assets/img/p1.png", "price": "Rs 2,126.96", "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 320.11",   "tag": "Trending Now" },
+        { "img": "/assets/img/p1.png", "price": "Rs 142.28",   "tag": "Trending Now" }
+       
+      ]
+    }
+  ],
+
+  "customizable": {
+    "title": "Customizable products",
+    "subtitle": "Provided by 60,000+ experienced manufacturers with design and production capabilities and on-time delivery.",
+    "cards": [
+      {
+        "title": "Source from factories",
+        "images": ["/assets/img/c1.png", "/assets/img/c2.png", "/assets/img/c3.png"]
+      },
+      {
+        "title": "Top-ranking suppliers",
+        "images": ["/assets/img/c4.png", "/assets/img/c5.png", "/assets/img/c6.png"]
+      }
+    ]
+  },
+
+  "readyToShip": {
+    "title": "Ready-to-ship products",
+    "subtitle": "Source from 15 million products that are ready to ship, and leave the facility within 15 days.",
+    "cards": [
+      {
+        "title": "Fast dispatch",
+        "images": ["/assets/img/r1.png","/assets/img/r2.png","/assets/img/r3.png"]
+      },
+      {
+        "title": "Weekly deals",
+        "images": ["/assets/img/r4.png", "/assets/img/r5.png", "/assets/img/r6.png"]
+      }
+      
+    ]
+  }
+}

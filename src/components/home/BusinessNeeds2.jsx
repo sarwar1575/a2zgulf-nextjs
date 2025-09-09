@@ -20,6 +20,7 @@ function BusinessNeeds2() {
             p-[40px]
             bg-white
             flex flex-col gap-[19.5px]
+            shadow-[0_4px_20px_#FFEEF126]
           "
         >
           {/* Icon inside circular badge */}
