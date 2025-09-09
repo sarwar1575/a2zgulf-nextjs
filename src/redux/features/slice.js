@@ -2,22 +2,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { registerUser, loginUser, fetchUserProfile } from '../../lib/api';
 
-// Async thunk for user registration
 export const register = createAsyncThunk('auth/register', async (userData) => {
   const response = await registerUser(userData);
-  return response;  // Return the response data
+  return response; 
 });
 
-// Async thunk for user login
+
 export const login = createAsyncThunk('auth/login', async (loginData) => {
   const response = await loginUser(loginData);
-  return response;  // Return the response data
+  return response;  
 });
 
-// Async thunk for fetching user profile
+
 export const fetchProfile = createAsyncThunk('user/fetchProfile', async () => {
   const response = await fetchUserProfile();
-  return response;  // Return the response data
+  return response;  
 });
 
 // Initial state
@@ -25,7 +24,7 @@ const initialState = {
   user: null,
   loading: false,
   error: null,
-  profile: null,  // For user profile data
+  profile: null,
 };
 
 // Slice
@@ -34,14 +33,13 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Handle registration
     builder
       .addCase(register.pending, (state) => {
         state.loading = true;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;  // Store user data after successful registration
+        state.user = action.payload; 
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -55,7 +53,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;  // Store user data after successful login
+        state.user = action.payload;  
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -69,7 +67,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;  // Store user profile data
+        state.profile = action.payload;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
