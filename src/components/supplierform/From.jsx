@@ -25,7 +25,12 @@ export default function Form() {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.auth);
 
-  // ✅ सिर्फ mandatory fields API के लिए
+const [emailError, setEmailError] = useState("");
+const [formError, setFormError] = useState("");
+const validateEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,24 +38,51 @@ export default function Form() {
     confirmPassword: ""
   });
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-  };
+const handleChange = (e) => {
+  const { id, value } = e.target;
+  setFormData({ ...formData, [id]: value });
+
+  if (id === "email") {
+    if (!validateEmail(value)) {
+      setEmailError("Please enter a valid email ID");
+    } else {
+      setEmailError("");
+    }
+  }
+};
 
   // ✅ Submit API call
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(register(formData))
-      .unwrap()
-      .then((res) => {
-        console.log("✅ Registration successful:", res);
-        setStep(2); // Step 2 (OTP page) पर ले जाएँ
-      })
-      .catch((err) => {
-        console.error("❌ Registration failed:", err);
-      });
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  // Inline email validation check
+  if (!validateEmail(formData.email)) {
+    setEmailError("Please enter a valid email ID");
+    return;
+  }
+
+  // Optional: Password match check
+  if (formData.password !== formData.confirmPassword) {
+    setFormError("Password and Confirm Password do not match!");
+    return;
+  }
+
+  dispatch(register(formData))
+    .unwrap()
+    .then((res) => {
+      console.log("✅ Registration successful:", res);
+      setStep(2);
+    })
+    .catch((err) => {
+      console.error("❌ Registration failed:", err);
+
+      if (err?.message?.includes("User already exists")) {
+        setFormError("User with this email already exists");
+      } else {
+        setFormError("Registration failed. Please try again.");
+      }
+    });
+};
 
   function goBack(e) {
     e.preventDefault();
@@ -137,7 +169,7 @@ export default function Form() {
                         </label>
                       </div>
 
-                      <div className="w-1/2 px-2 mb-6 relative">
+                      {/* <div className="w-1/2 px-2 mb-6 relative">
                         <input
                           type="text"
                           id="companyReg"
@@ -150,9 +182,9 @@ export default function Form() {
                         >
                           Company Registration No *
                         </label>
-                      </div>
+                      </div> */}
 
-                      <div className="w-1/2 px-2 mb-6 relative">
+                      {/* <div className="w-1/2 px-2 mb-6 relative">
                         <input
                           type="text"
                           id="vatNo"
@@ -165,9 +197,9 @@ export default function Form() {
                         >
                           VAT No *
                         </label>
-                      </div>
+                      </div> */}
 
-                      <div className="w-1/2 px-2 mb-6 relative">
+                      {/* <div className="w-1/2 px-2 mb-6 relative">
                         <input
                           type="text"
                           id="nationalAddress"
@@ -180,9 +212,9 @@ export default function Form() {
                         >
                           National Address *
                         </label>
-                      </div>
+                      </div> */}
 
-                      <div className="w-1/2 px-2 mb-6 relative">
+                      {/* <div className="w-1/2 px-2 mb-6 relative">
                         <input
                           type="tel"
                           id="phone"
@@ -195,7 +227,7 @@ export default function Form() {
                         >
                           Phone Number *
                         </label>
-                      </div>
+                      </div> */}
 
                       <div className="w-1/2 px-2 mb-6 relative">
                         <input
@@ -212,6 +244,9 @@ export default function Form() {
                         >
                           Email *
                         </label>
+                        {emailError && (
+                        <p className="text-red-500 text-[12px] mt-1">{emailError}</p>
+                      )}
                       </div>
 
                       <div className="w-1/2 px-2 mb-6 relative">
@@ -231,25 +266,30 @@ export default function Form() {
                         </label>
                       </div>
 
-                      <div className="w-1/2 px-2 mb-6 relative">
-                        <input
-                          type="password"
-                          id="confirmPassword"
-                          value={formData.confirmPassword}
-                          onChange={handleChange}
-                          className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
-                          placeholder="Enter"
-                        />
-                        <label
-                          htmlFor="confirmPassword"
-                          className="absolute left-6 top-2 text-[#313131] text-[14px] font-semibold transition-all peer-focus:top-1 peer-focus:text-xs"
-                        >
-                          Confirm Password *
-                        </label>
-                      </div>
+                    <div className="w-1/2 px-2 mb-6 relative">
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="peer w-full border border-[#cccc] rounded-lg px-4 pt-8 pb-1 text-sm text-[#2B2F32] focus:outline-none placeholder:text-[16px] placeholder:font-normal placeholder:text-[#B7B7B7]"
+                    placeholder="Enter"
+                  />
+                  <label
+                    htmlFor="confirmPassword"
+                    className="absolute left-6 top-2 text-[#313131] text-[14px] font-semibold transition-all peer-focus:top-1 peer-focus:text-xs"
+                  >
+                    Confirm Password *
+                  </label>
+
+                  {/* ✅ Password mismatch error यहाँ दिखेगा */}
+                  {formError && (
+                    <p className="text-red-500 text-[12px] mt-1">{formError}</p>
+                  )}
+                </div>
                     </div>
 
-                    <div className="mt-2 border-[#CFE7FF] pb-15">
+                    {/* <div className="mt-2 border-[#CFE7FF] pb-15">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {uploadCards.map((item, index) => (
                           <label
@@ -261,8 +301,6 @@ export default function Form() {
                                 {item.title}
                               </p>
                             </div>
-
-                            {/* Cloud Icon */}
                             <div className="mx-auto mb-0 flex justify-center pb-2">
                               <Image
                                 src="/assets/icon/cloud-add.png"
@@ -302,7 +340,7 @@ export default function Form() {
                           </label>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
                     <div className="">
                       <div className="flex items-center gap-2 pb-10">
                         <input
@@ -346,12 +384,15 @@ export default function Form() {
                     <h6 className="text-[28px] font-semibold text-[#3B3B3B] pb-5 text-center">
                       OTP Verification
                     </h6>
-                    <p className="text-[16px] font-semibold text-[#2B2F32] pb-4 text-center">
-                      Enter the 6-character code sent to +966 78…98{" "}
-                      <a className="text-[#5570F1] cursor-pointer text-[16px] font-semibold">
-                        Edit
-                      </a>
-                    </p>
+                   <p className="text-[16px] font-semibold text-[#2B2F32] pb-4 text-center">
+                Enter the 6-character code sent to {formData.email}{" "}
+                <a
+                  className="text-[#5570F1] cursor-pointer text-[16px] font-semibold"
+                  onClick={goBack} // ✅ Optional: back to email step
+                >
+                  Edit
+                </a>
+              </p>
 
                     <div className="flex flex-col items-center gap-6">
                       <div className="flex justify-between w-full max-w-xs">
