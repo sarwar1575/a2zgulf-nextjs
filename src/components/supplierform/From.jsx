@@ -367,7 +367,7 @@ const handleSubmit = (e) => {
                         <span className="text-[15px] text-[#000000] font-medium">
                           Already hav an account?{" "}
                           <a
-                            href="#"
+                            href="/signin"
                             className="text-[14px] font-bold text-[#38CBFF]"
                           >
                             Sign in

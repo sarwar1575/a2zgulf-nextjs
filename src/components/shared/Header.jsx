@@ -31,7 +31,7 @@ const handleLogout = async () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-[10px]">
           <div className="lg:col-span-6 pb-0">
             <div className="logo">
-              <Link href="">
+              <Link href="/">
                 <Image
                   src="/assets/img/weblogo.png"
                   width={170}
