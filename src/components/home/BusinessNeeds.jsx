@@ -3,7 +3,6 @@ import Image from "next/image";
 import businessData from "../../data/BusinessNeeds.json";
 
 function BusinessNeeds() {
-  
   return (
     <>
       <section className="businessNeeds bg-[#FFF5F7] py-[10px]">
@@ -20,22 +19,49 @@ function BusinessNeeds() {
 
             {/* Right Column */}
             <div className="lg:col-span-5">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 float-right">
-                <div className="lg:col-span-6">
-                  <h4 className="font-bold text-[36px] text-[#38CBFF]">200M+</h4>
-                  <p className="">Products</p>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 float-right">
+                {/* Products */}
+                <div className="lg:col-span-6 flex items-center">
+                  <div className="w-[4px] h-[60px] rounded bg-gray-300 mr-3"></div>
+                  <div>
+                    <h4 className="font-bold text-[36px] text-[#38CBFF]">
+                      200M+
+                    </h4>
+                    <p>Products</p>
+                  </div>
                 </div>
-                <div className="lg:col-span-6">
-                  <h4 className="font-bold text-[36px] text-[#38CBFF]">200K+</h4>
-                  <p>Suppliers</p>
+
+                {/* Suppliers */}
+                <div className="lg:col-span-6 flex items-center">
+                  <div className="w-[4px] h-[60px] rounded bg-gray-300 mr-3"></div>
+                  <div>
+                    <h4 className="font-bold text-[36px] text-[#38CBFF]">
+                      200K+
+                    </h4>
+                    <p>Suppliers</p>
+                  </div>
                 </div>
-                <div className="lg:col-span-6">
-                  <h4 className="font-bold text-[36px] text-[#38CBFF]">5,900</h4>
-                  <p>product categories</p>
+
+                {/* Product categories */}
+                <div className="lg:col-span-6 flex items-center">
+                  <div className="w-[4px] h-[60px] rounded bg-gray-300 mr-3"></div>
+                  <div>
+                    <h4 className="font-bold text-[36px] text-[#38CBFF]">
+                      5,900
+                    </h4>
+                    <p>Product categories</p>
+                  </div>
                 </div>
-                <div className="lg:col-span-6">
-                  <h4 className="font-bold text-[36px] text-[#38CBFF]">200+</h4>
-                  <p>countries and regions</p>
+
+                {/* Countries */}
+                <div className="lg:col-span-6 flex items-center">
+                  <div className="w-[4px] h-[60px] rounded bg-gray-300 mr-3"></div>
+                  <div>
+                    <h4 className="font-bold text-[36px] text-[#38CBFF]">
+                      200+
+                    </h4>
+                    <p>Countries and regions</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -44,7 +70,7 @@ function BusinessNeeds() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-[36px] mb-[36px]">
             {businessData.map((items, index) => (
               <div
-                className="lg:col-span-2 py-6 border border-[#38CBFF] place-items-center rounded-md"
+                className="lg:col-span-2 py-6 border border-[#38CBFF] bg-white place-items-center rounded-md"
                 key={index}
               >
                 <Image
