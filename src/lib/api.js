@@ -46,3 +46,18 @@ export const fetchUserProfile = async () => {
     throw error;
   }
 };
+
+
+export const logoutUserApi = async (token) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/auth/logout`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Logout failed:", error);
+    throw error;
+  }
+};
