@@ -1,0 +1,16 @@
+{
+  "title": "Streamline ordering from search to fulfillment, all in one place",
+  "panelImage": "/assets/img/o1.png",
+  "steps": [
+    {
+      "type": "primary",
+      "icon": "/assets/icon/o2.png",
+      "title": "Search for matches",
+      "desc": "Search and filter from millions of product and supplier offerings to find the matching ones for your business."
+    },
+    { "icon": "/assets/icon/o3.png", "title": "Identify the right one" },
+    { "icon": "/assets/icon/o4.png", "title": "Pay with confidence" },
+    { "icon": "/assets/icon/o5.png", "title": "Fulfill with transparency" },
+    { "icon": "/assets/icon/o6.png", "title": "Manage with ease" }
+  ]
+}
