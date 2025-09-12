@@ -1,6 +1,9 @@
 [
     {
-        "images": "https://i.ibb.co/Zpwfkzsk/zoooho.png"
+        "id": "zoho",
+    "name": "Zoho",
+    "provider": "ZOHO",
+    "images": "https://i.ibb.co/Zpwfkzsk/zoooho.png"
     },
        {
          "images": "https://i.ibb.co/vxVMQP6P/odoo.png"

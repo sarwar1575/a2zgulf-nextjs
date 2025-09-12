@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import SigninForm from "../auth/SigninForm";
 
 function SigninModal({ show, handleClose }) {
   const [visible, setVisible] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (show) {
@@ -15,6 +17,13 @@ function SigninModal({ show, handleClose }) {
   }, [show]);
 
   if (!visible) return null;
+
+  // after successful login → close modal → go to dashboard
+  const handleSuccess = () => {
+    handleClose?.();
+    // change path if your vendor dashboard is different (e.g. "/vendor/dashboard")
+    router.replace("/dashboard");
+  };
 
   return (
     <div
@@ -41,8 +50,8 @@ function SigninModal({ show, handleClose }) {
         </h2>
         <p className="text-center text-gray-600 mt-2 mb-6 text-lg">Sign In</p>
 
-        {/* Reuse the form */}
-        <SigninForm onSuccess={handleClose} />
+        {/* Pass redirect handler */}
+        <SigninForm onSuccess={handleSuccess} />
 
         <p className="text-center text-sm text-gray-700 mt-6">
           New to A2Z Gulf?{" "}
