@@ -1,5 +1,5 @@
 
-import From from "@/components/supplierform/From";
+import From from "@/components/supplierform/Form";
 
 export default function SupplierFormPage() {
   return <From />;
