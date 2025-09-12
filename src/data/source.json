@@ -1,0 +1,20 @@
+{
+  "headline": "Source direct–from–factory",
+  "images": [
+    "/assets/img/s1.png",
+    "/assets/img/s2.png",
+    "/assets/img/s3.png"
+  ],
+  "features": [
+    {
+      "heading": "Ensure production quality with",
+      "image": "/assets/img/s4.png",
+      "desc": "Connect with a variety of suppliers with third-party-verified credentials and capabilities. Look    for the Verified logo to begin sourcing with experienced suppliers your business could rely on."
+    },
+    {
+      "heading": "Protect your purchase with",
+      "image": "/assets/img/s5.png",
+      "desc": "Source confidently with access to secure payment options, protection against product or shipping issues, and mediation support for any purchase-related concerns when you order and pay on Alibaba.com."
+    }
+  ]
+}

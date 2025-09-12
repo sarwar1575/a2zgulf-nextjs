@@ -1,0 +1,21 @@
+{
+  "title": "Get tailored discounts, services, and tools for your business stage.",
+  "subtitle": "Grow with curated benefits offered by the free Alibaba.com Membership, whether you are a small business needing the essentials to start sourcing or a well-established enterprise looking for tools and solutions for more complex orders.",
+  "testimonials": [
+    {
+      "avatar": "/assets/img/m1.png",
+      "name": "Eva Jane",
+      "role": "Founder of Eva Jane Beauty",
+      "quote": "As an entrepreneur who is deeply involved in the Beauty industry, I have been very devoted to creating my original products. Alibaba.com has been my trusted partner in this process."
+    },
+    {
+      "avatar": "/assets/img/m1.png",
+      "name": "Eva Jane",
+      "role": "Founder of Eva Jane Beauty",
+      "quote": "As an entrepreneur who is deeply involved in the Beauty industry, I have been very devoted to creating my original products. Alibaba.com has been my trusted partner in this process."
+    }
+  ],
+  "ctaTitle": "Ready to get started?",
+  "ctaSubtitle": "Explore millions of products from trusted suppliers by signing up today!",
+  "ctaButton": { "label": "Sign up", "href": "/signup" }
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Empowering businesses through global trade",
+  "subtitle": "Alibaba.com offers one-stop B2B trading solutions for global small and medium-sized businesses, empowering them to transform through digital trade, grasp opportunities, and accelerate growth internationally.",
+  "cards": [
+    { "img": "/assets/img/e8.png", "caption": "Make it easy to do business anywhere.", "href": "#" },
+    { "img": "/assets/img/e3.png", "kicker": "OUR LOCATIONS", "title": "We have teams around the world.", "href": "#" },
+    { "img": "/assets/img/e2.png", "kicker": "OUR ESG PROMISES", "title": "Responsible technology. Sustainable future.", "href": "#" }
+  ],
+  "regionTitle": "Find suppliers by country or region",
+  "viewMore": { "label": "View more", "href": "#" },
+  "countries": [
+    { "flag": "/assets/icon/e4.png", "name": "Italy" },
+    { "flag": "/assets/icon/e5.png", "name": "Türkiye" },
+    { "flag": "/assets/icon/e6.png", "name": "Malaysia" },
+    { "flag": "/assets/icon/e7.png", "name": "South Korea" },
+    { "flag": "/assets/icon/e1.png", "name": "Vietnam" },
+    { "flag": "/assets/icon/e9.png", "name": "Russia" },
+    { "flag": "/assets/icon/e10.png", "name": "Thailand" }
+  ],
+   "about": {
+    "title": "About A2Z Gulf",
+    "body": "Founded in 1999, A2Z Gulf is a leading B2B e-commerce platform for simplified global sourcing. We offer AI-powered sourcing, supplier search, secure order placement and payment, inspections, and logistics services—helping worldwide business buyers grow with a professional, efficient, and transparent sourcing process."
+  }
+}
