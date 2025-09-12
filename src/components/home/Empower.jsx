@@ -14,17 +14,17 @@ export default function Empower() {
           <div className="grid lg:grid-cols-3 gap-5">
             <a
   href={cards[0].href}
-  className="relative rounded-xl overflow-hidden lg:col-span-2"
+  className="relative rounded-xl overflow-hidden lg:col-span-2 w-[704px] h-[600px]"
 >
   {/* Image */}
   <img
     src={cards[0].img}
     alt=""
-    className="w-[704px] h-[600px] object-cover rounded-[16px]"
+    className="w-full h-full object-cover rounded-[16px]"
   />
 
-  {/* Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0)] to-[#000000]" />
+  {/* Gradient Overlay (same size as image) */}
+  <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[rgba(0,0,0,0)] to-[#000000]" />
 
   {/* Caption Text */}
   <div className="absolute bottom-4 left-4 text-white font-semibold">
