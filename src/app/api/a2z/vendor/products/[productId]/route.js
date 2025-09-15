@@ -1,118 +1,61 @@
+import { apiBase, joinApi, forwardHeaders, bubble } from "../../../_utils";
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function joinApi(base, path) {
-  if (!base) return path;
-  let b = base.replace(/\/+$/, "");
-  let p = path.startsWith("/") ? path : `/${path}`;
-  if (b.endsWith("/api") && p.startsWith("/api")) p = p.replace(/^\/api/, "");
-  return b + p;
-}
-
-function readAuth(req) {
-  const h = req.headers;
-  const auth = h.get("authorization");
-  if (auth && auth.toLowerCase().startsWith("bearer ")) return auth;
-
-  const xAccess = h.get("x-access-token");
-  if (xAccess) return `Bearer ${xAccess}`;
-
-  const cookie = h.get("cookie") || "";
-  const m = cookie.match(/(?:^|;\s*)(token|accessToken|authToken)=([^;]+)/i);
-  if (m) return `Bearer ${decodeURIComponent(m[2])}`;
-
-  return "";
-}
-
+// DETAILS
 export async function GET(req, { params }) {
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.a2zgulf.com/api";
   const { productId } = params || {};
-  const auth = readAuth(req);
-  const csrf = req.headers.get("x-csrf-token") || "";
-
-  const upstream = await fetch(joinApi(API_BASE, `/vendor/products/${productId}`), {
+  const upstream = await fetch(joinApi(apiBase(), `/vendor/products/${productId}`), {
     method: "GET",
-    headers: {
-      Authorization: auth,
-      "X-CSRF-TOKEN": csrf,
-      Accept: "application/json",
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
-    },
+    headers: forwardHeaders(req),
     cache: "no-store",
     redirect: "follow",
   });
-
-  const text = await upstream.text();
-  return new Response(text, {
-    status: upstream.status,
-    headers: {
-      "content-type": upstream.headers.get("content-type") || "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
+  return bubble(upstream, "A2Z DETAILS");
 }
 
-export async function POST(req, { params }) {
-  // UPDATE
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.a2zgulf.com/api";
+// UPDATE (PUT preferred per Postman)
+export async function PUT(req, { params }) {
   const { productId } = params || {};
-  const auth = readAuth(req);
-  const csrf = req.headers.get("x-csrf-token") || "";
-  const payload = await req.json().catch(() => ({}));
+  const ctype = req.headers.get("content-type") || "";
+  const target = joinApi(apiBase(), `/vendor/products/${productId}`);
 
-  const upstream = await fetch(joinApi(API_BASE, `/vendor/products/${productId}`), {
-    method: "POST",
-    headers: {
-      Authorization: auth,
-      "X-CSRF-TOKEN": csrf,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
-    },
-    body: JSON.stringify(payload),
+  if (ctype.includes("multipart/form-data")) {
+    const fd = await req.formData();
+    const upstream = await fetch(target, {
+      method: "PUT",
+      headers: forwardHeaders(req, { dropContentType: true }),
+      body: fd,
+      cache: "no-store",
+      redirect: "follow",
+    });
+    return bubble(upstream, "A2Z UPDATE MULTIPART");
+  }
+
+  const json = await req.json().catch(() => ({}));
+  const upstream = await fetch(target, {
+    method: "PUT",
+    headers: forwardHeaders(req, { setJson: true }),
+    body: JSON.stringify(json || {}),
     cache: "no-store",
     redirect: "follow",
   });
-
-  const text = await upstream.text();
-  return new Response(text, {
-    status: upstream.status,
-    headers: {
-      "content-type": upstream.headers.get("content-type") || "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
+  return bubble(upstream, "A2Z UPDATE JSON");
 }
 
+// Allow POST-as-update (if any callers still POST)
+export async function POST(req, ctx) {
+  return PUT(req, ctx);
+}
+
+// DELETE
 export async function DELETE(req, { params }) {
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.a2zgulf.com/api";
   const { productId } = params || {};
-  const auth = readAuth(req);
-  const csrf = req.headers.get("x-csrf-token") || "";
-
-  const upstream = await fetch(joinApi(API_BASE, `/vendor/products/${productId}`), {
+  const upstream = await fetch(joinApi(apiBase(), `/vendor/products/${productId}`), {
     method: "DELETE",
-    headers: {
-      Authorization: auth,
-      "X-CSRF-TOKEN": csrf,
-      Accept: "application/json",
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
-    },
+    headers: forwardHeaders(req),
     cache: "no-store",
     redirect: "follow",
   });
-
-  const text = await upstream.text();
-  return new Response(text || "", {
-    status: upstream.status,
-    headers: {
-      "content-type": upstream.headers.get("content-type") || "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
+  return bubble(upstream, "A2Z DELETE");
 }

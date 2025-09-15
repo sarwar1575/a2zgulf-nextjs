@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { apiRequest, ensureCsrf } from "../../../lib/apiClient"; // <-- relative path
 
-/* ---------- helpers ---------- */
 const API_BASE = "/api/a2z"; // local proxy
 
 function joinApi(base, path) {
@@ -15,54 +15,6 @@ function joinApi(base, path) {
   return b + p;
 }
 
-function getLocalToken() {
-  try {
-    return (
-      localStorage.getItem("token") ||
-      localStorage.getItem("accessToken") ||
-      localStorage.getItem("authToken") ||
-      ""
-    );
-  } catch {
-    return "";
-  }
-}
-
-// tokenOverride = redux token, if present
-async function apiRequest(path, { method = "GET", params, body, tokenOverride } = {}) {
-  const t = tokenOverride || getLocalToken();
-  const url = new URL(joinApi(API_BASE, path), window.location.origin);
-  const qp = { ...(params || {}), _t: Date.now() };
-  Object.entries(qp).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
-  });
-
-  const res = await fetch(url.toString(), {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: t ? `Bearer ${t}` : "",
-      "X-CSRF-TOKEN": "", // per spec
-    },
-    cache: "no-store",
-    redirect: "follow",
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  const text = await res.text();
-  let data = text ? (() => { try { return JSON.parse(text); } catch { return text; } })() : null;
-
-  if (!res.ok) {
-    const msg = (data && (data.message || data.error)) || `HTTP ${res.status} ${res.statusText}`;
-    const err = new Error(msg);
-    err.status = res.status;
-    err.data = data;
-    throw err;
-  }
-  return data;
-}
-
-/* ---------- component (layout preserved) ---------- */
 export default function Overview({ onGoToProduct }) {
   const reduxToken = useSelector((s) => s?.auth?.token);
   const [rows, setRows] = useState([]);
@@ -76,7 +28,8 @@ export default function Overview({ onGoToProduct }) {
     setLoading(true);
     setErr("");
     try {
-      const data = await apiRequest("/vendor/products", {
+      await ensureCsrf();
+      const data = await apiRequest(joinApi(API_BASE, "/vendor/products"), {
         params: { page, limit, sortBy: "name", sortDir: "asc" },
         tokenOverride: reduxToken,
       });
@@ -110,22 +63,21 @@ export default function Overview({ onGoToProduct }) {
 
   const stats = useMemo(() => {
     const total = rows.length;
-    const get = (v) => rows.filter((r) => (r.status || r.syncStatus) === v).length;
-    const synced = get("Synced");
-    const pending = get("Pending");
-    const notSync = get("Not Sync") || get("Error") || get("Failed");
+    const val = (v) => rows.filter((r) => (r.status || r.syncStatus) === v).length;
+    const synced = val("Synced");
+    const pending = val("Pending");
+    const notSync = val("Not Sync") || val("Error") || val("Failed");
     return { total, synced, notSync, pending };
   }, [rows]);
 
-  const displayStock = (r) =>
-    r.stock ?? r.quantity ?? r.availableStock ?? r.stockAvailable ?? "-";
-  const displayStatusCls = (v) =>
+  const stockOf = (r) => r.stock ?? r.quantity ?? r.availableStock ?? r.stockAvailable ?? "-";
+  const statusCls = (v) =>
     v === "Synced" ? "text-[#10A760]" : v === "Pending" ? "text-[#F59E0B]" : "text-[#FF4D4F]";
 
   return (
     <>
       <div className="pb-[50px]">
-        {/* Top header */}
+        {/* Top header (layout preserved) */}
         <div className="flex items-center justify-between rounded-sm bg-white px-6 py-4 shadow mb-6">
           <div className="">
             <h1 className="text-[20px] font-semibold text-[#383E49]">Seller Dashboard</h1>
@@ -189,7 +141,7 @@ export default function Overview({ onGoToProduct }) {
           </div>
         </div>
 
-        {/* Products table */}
+        {/* Products table (layout preserved) */}
         <div className="bg-white rounded-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 py-8">
             <h2 className="text-lg font-semibold text-slate-900">Products</h2>
@@ -203,13 +155,7 @@ export default function Overview({ onGoToProduct }) {
               </button>
 
               <button className="inline-flex items-center gap-2 rounded-sm border border-[#D0D3D9] bg-white px-5 py-1 text-[#5D6679] text-[14px] font-medium">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
                   <path d="M3 5h18M6 12h12M10 19h4" />
                 </svg>
                 Filters
@@ -237,31 +183,25 @@ export default function Overview({ onGoToProduct }) {
 
               <tbody className="divide-y divide-[#D0D3D9]">
                 {(loading && (
-                  <tr>
-                    <td className="py-6 px-5" colSpan={6}>Loading…</td>
-                  </tr>
+                  <tr><td className="py-6 px-5" colSpan={6}>Loading…</td></tr>
                 )) ||
-                  (rows.length === 0 && (
-                    <tr>
-                      <td className="py-6 px-5 text-slate-500" colSpan={6}>No products found.</td>
-                    </tr>
-                  )) ||
+                (rows.length === 0 && (
+                  <tr><td className="py-6 px-5 text-slate-500" colSpan={6}>No products found.</td></tr>
+                )) ||
                   rows.map((r, i) => {
                     const id = r.id || r.productId || r._id || r.ID || i;
                     const name = r.name || r.productName || "-";
                     const sku = r.sku || r.SKU || "-";
                     const price = r.price ?? r.unitPrice ?? 0;
                     const status = r.status || r.syncStatus || "Synced";
-                    const displayStatusCls = (v) =>
-                      v === "Synced" ? "text-[#10A760]" : v === "Pending" ? "text-[#F59E0B]" : "text-[#FF4D4F]";
                     return (
                       <tr key={id} className="hover:bg-slate-50/60">
                         <td className="py-4 px-4 sm:px-5 text-[14px] font-medium text-[#48505E]">{sku}</td>
                         <td className="py-4 px-4 sm:px-5 text-[14px] font-medium text-[#48505E]">{name}</td>
                         <td className="py-4 px-4 sm:px-5 text-[14px] font-medium text-[#48505E]">₹{price}</td>
-                        <td className="py-4 px-4 sm:px-5 text-[14px] font-medium text-[#48505E]">{displayStock(r)}</td>
+                        <td className="py-4 px-4 sm:px-5 text-[14px] font-medium text-[#48505E]">{stockOf(r)}</td>
                         <td className="py-4 px-4 sm:px-5">
-                          <span className={"text-[14px] font-medium " + displayStatusCls(status)}>{status}</span>
+                          <span className={"text-[14px] font-medium " + statusCls(status)}>{status}</span>
                         </td>
                         <td className="py-4 px-2 sm:pr-6">
                           <div className="flex justify-end items-center gap-4 text-slate-500">
