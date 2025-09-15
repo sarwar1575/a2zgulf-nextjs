@@ -151,11 +151,10 @@ export default function Form() {
 
 
 // ----- ERP Connect (Step 3) -----
+// ----- ERP Connect (Step 3) -----
 const [connecting, setConnecting] = useState(false);
 const [connectError, setConnectError] = useState("");
 
-// 🟢 Token ko Redux se le (register ke baad yahi set hota hai)
-//   fallback: localStorage (agar page reload ke baad ho)
 const { token: registerToken } = useSelector((s) => s.auth || {});
 
 const handleConnectERP = async () => {
@@ -168,7 +167,6 @@ const handleConnectERP = async () => {
   setConnectError("");
 
   try {
-    // Selected card se provider nikalo (e.g. ZOHO)
     const provider = String(
       ERPDATA?.[selected]?.provider ||
       ERPDATA?.[selected]?.id ||
@@ -176,51 +174,44 @@ const handleConnectERP = async () => {
       "ZOHO"
     ).toUpperCase();
 
-    // ✅ Token register se (Redux) → fallback localStorage
     const token = registerToken || localStorage.getItem("ACCESS_TOKEN") || "";
     if (!token) throw new Error("Missing auth token from registration.");
-
-    // ✅ CSRF header (app boot/login pe set kiya tha)
     const csrf = localStorage.getItem("X_CSRF_TOKEN") || "";
 
-    // ⚠️ Backend ke curl ke mutabik email/password bhejne hain (GET body nahi hota)
-    const email = (formData.email || "").trim();
-    const password = formData.password || "";
+    const email = (formData?.email || "").trim();
+    const password = formData?.password || "";
 
     const qs = new URLSearchParams({
       ...(email ? { email } : {}),
       ...(password ? { password } : {}),
     }).toString();
 
-    // ⛳️ Next API proxy ko call karo (ye headers backend tak forward karega)
-    const resp = await fetch(
-      `/api/erp-auth/${provider}/start${qs ? `?${qs}` : ""}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...(csrf ? { "X-CSRF-TOKEN": csrf } : {}),
-        },
-        credentials: "include",
-      }
-    );
+    // Same-origin call to our API route (server handles redirect to Zoho)
+    const resp = await fetch(`/api/erp-auth/${provider}/start${qs ? `?${qs}` : ""}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-CSRF-TOKEN": csrf || "1", // ensure presence
+      },
+      credentials: "include", // forward cookies if any
+    });
 
     if (!resp.ok) {
-      const txt = await resp.text().catch(() => "");
-      throw new Error(txt || `Failed: ${resp.status}`);
+      const errTxt = await resp.text().catch(() => "");
+      throw new Error(errTxt || `Failed: ${resp.status}`);
     }
 
     const { startUrl } = await resp.json();
     if (!startUrl) throw new Error("OAuth URL missing from server.");
 
-    // 🔁 Zoho authorize page par le jao
-    window.location.href = startUrl;
+    // Top-level navigation to Zoho
+    window.location.assign(startUrl);
   } catch (e) {
     setConnectError(e?.message || "Failed to start ERP OAuth");
-  } finally {
     setConnecting(false);
   }
 };
+
 
 
   return (

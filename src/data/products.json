@@ -1,0 +1,56 @@
+[
+  {
+    "sku": "P-0198",
+    "name": "Maggi",
+    "price": 430,
+    "status": "Synced"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Bru",
+    "price": 257,
+    "status": "Not Sync"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Red Bull",
+    "price": 405,
+    "status": "Synced"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Bourn Vita",
+    "price": 502,
+    "status": "Not Sync"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Horlicks",
+    "price": 530,
+    "status": "Synced"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Harpic",
+    "price": 605,
+    "status": "Synced"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Ariel",
+    "price": 408,
+    "status": "Not Sync"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Scotch Brite",
+    "price": 359,
+    "status": "Synced"
+  },
+  {
+    "sku": "P-0198",
+    "name": "Coca cola",
+    "price": 205,
+    "status": "Pending"
+  }
+]

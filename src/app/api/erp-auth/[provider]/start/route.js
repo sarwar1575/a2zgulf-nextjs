@@ -1,19 +1,25 @@
+// src/app/api/erp-auth/[provider]/start/route.js
 export const dynamic = "force-dynamic";
 
+/**
+ * Safely join base + path
+ * - trims trailing slashes on base
+ * - if base already ends with /api and path starts with /api, it drops the extra /api
+ */
 function joinApi(base, path) {
   if (!base) return path;
-  let b = base.replace(/\/+$/, "");
+  const b = String(base).replace(/\/+$/, ""); // trim trailing slashes
   let p = path.startsWith("/") ? path : `/${path}`;
+  // avoid double /api/api
   if (b.endsWith("/api") && p.startsWith("/api")) p = p.replace(/^\/api/, "");
   return b + p;
 }
 
-export async function GET(req, ctx) {
+export async function GET(req, { params }) {
   try {
-    // 🔧 params must be awaited in dynamic route handlers
-    const { provider: rawProvider } = await ctx.params;
-    const provider = String(rawProvider || "ZOHO").toUpperCase();
+    const provider = String(params?.provider || "ZOHO").toUpperCase();
 
+    // MUST be like: https://api.a2zgulf.com/api  (with /api at end)
     const backend = process.env.NEXT_PUBLIC_API_BASE_URL;
     if (!backend) {
       return new Response(JSON.stringify({ error: "NEXT_PUBLIC_API_BASE_URL not set" }), {
@@ -22,31 +28,28 @@ export async function GET(req, ctx) {
       });
     }
 
-    // read email/password from query (GET body is not used by browsers)
-    const url = new URL(req.url);
-    const email = url.searchParams.get("email") || "";
-    const password = url.searchParams.get("password") || "";
+    // Build backend endpoint: if base already ends with /api, we append /auth/oAuth/...
+    const endpointUrl = new URL(joinApi(backend, `/auth/oAuth/${provider}`));
 
-    // forward headers
+    // Forward ALL query params (email, password, and any future ones)
+    const incoming = new URL(req.url);
+    incoming.searchParams.forEach((v, k) => endpointUrl.searchParams.set(k, v));
+
+    // Forward a couple of important headers if present
     const h = new Headers(req.headers);
     const auth = h.get("authorization");
     const csrf = h.get("x-csrf-token");
 
-    // build backend URL
-    const endpoint = new URL(joinApi(backend, `/api/auth/oAuth/${provider}`));
-    if (email) endpoint.searchParams.set("email", email);
-    if (password) endpoint.searchParams.set("password", password);
-
-    const upstream = await fetch(endpoint.toString(), {
+    const upstream = await fetch(endpointUrl.toString(), {
       method: "GET",
       headers: {
         ...(auth ? { Authorization: auth } : {}),
         ...(csrf ? { "X-CSRF-TOKEN": csrf } : {}),
       },
-      redirect: "manual",
+      redirect: "manual", // we want to read 3xx and return startUrl cleanly
     });
 
-    // 3xx → Location has Zoho URL
+    // If backend responds with a redirect (Zoho auth), capture Location
     if (upstream.status >= 300 && upstream.status < 400) {
       const loc = upstream.headers.get("location");
       if (loc) {
@@ -57,28 +60,37 @@ export async function GET(req, ctx) {
       }
     }
 
-    // otherwise try to parse body as JSON or raw URL
+    // Try to parse body smartly
+    const contentType = upstream.headers.get("content-type") || "";
     const text = await upstream.text();
-    try {
-      const data = JSON.parse(text);
-      if (data?.oAuthUrl || data?.url) {
-        return new Response(JSON.stringify({ startUrl: data.oAuthUrl || data.url }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-    } catch {
-      if (text?.startsWith("http")) {
-        return new Response(JSON.stringify({ startUrl: text }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+
+    // If JSON, look for { oAuthUrl } or { url }
+    if (contentType.includes("application/json")) {
+      try {
+        const data = JSON.parse(text || "{}");
+        if (data?.oAuthUrl || data?.url) {
+          return new Response(JSON.stringify({ startUrl: data.oAuthUrl || data.url }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+      } catch {
+        // fall through to text checks
       }
     }
 
+    // If raw URL in body
+    if (text && /^https?:\/\//i.test(text.trim())) {
+      return new Response(JSON.stringify({ startUrl: text.trim() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Otherwise bubble upstream body & status (useful for errors)
     return new Response(text || "Kickoff failed", {
       status: upstream.status || 500,
-      headers: { "Content-Type": "text/plain" },
+      headers: { "Content-Type": contentType || "text/plain" },
     });
   } catch (e) {
     return new Response(JSON.stringify({ error: e?.message || "Proxy error" }), {

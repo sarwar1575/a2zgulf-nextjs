@@ -1,0 +1,20 @@
+{
+  "columns": [
+    { "title": "Get support", "links": ["Help Center","Live chat","Check order status","Refunds","Report abuse"] },
+    { "title": "Payments and protections", "links": ["Safe and easy payments","A2Z Business Edge Credit Card","Money-back policy","On-time shipping","After-sales protections","Product monitoring services"] },
+    { "title": "Source on Alibaba.com", "links": ["Request for Quotation","Membership program","A2Z Logistics","Sales tax and VAT","A2Z Reads"] },
+    { "title": "Sell on Alibaba.com", "links": ["Start selling","Seller Central","Become a Verified Supplier","Partnerships","Download the app for suppliers"] },
+    { "title": "Get to know us", "links": ["About A2Z","Corporate responsibility","News center","Careers"] }
+  ],
+  "payments": ["/assets/icon/ax.png","/assets/icon/v.png","/assets/icon/ver.png","/assets/icon/pp.png","/assets/icon/d.png","/assets/icon/pl.png","/assets/icon/ap.png","/assets/icon/gp.png","/assets/icon/jcb.png"],
+  "socials": [
+    { "icon": "/assets/icon/fb.png", "href": "#" },
+    { "icon": "/assets/icon/ld.png", "href": "#" },
+    { "icon": "/assets/icon/t.png", "href": "#" },
+    { "icon": "/assets/icon/ig.png", "href": "#" },
+    { "icon": "/assets/icon/yt.png", "href": "#" },
+    { "icon": "/assets/icon/tt.png", "href": "#" }
+  ],
+  "apps": { "ios": "/assets/icon/as.png", "android": "/assets/icon/gpl.png" },
+  "bottomText": "Trade on the go with the a2z.com app"
+}

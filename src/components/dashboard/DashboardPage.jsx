@@ -9,22 +9,48 @@ import Leads from "./leeds/Leads";
 import Chat from "./chat/Chat";
 import Logs from "./logs/Logs";
 
-function DashboardPage() {
-  const [activePage, setActivePage] = useState("overview");
+export default function DashboardPage() {
+  const [activePage, _setActivePage] = useState("overview");
+
+  // central state for Products page
+  const [productView, setProductView] = useState("list");        // "list" | "add" | "view" | "edit" | "delete"
+  const [productSelected, setProductSelected] = useState(null);
+
+  // use this everywhere instead of setActivePage
+  const setActivePage = (next) => {
+    _setActivePage(next);
+    if (next === "products") {
+      // ✅ sidebar click → always reset to list
+      setProductView("list");
+      setProductSelected(null);
+    }
+  };
+
+  // Overview से deep-link helper
+  const goToProduct = (view = "list", row = null) => {
+    setProductView(view);
+    setProductSelected(row);
+    _setActivePage("products");
+  };
 
   return (
     <div className="container mx-auto px-4">
       <div className="flex flex-wrap -mx-4">
-        {/* Sidebar (col-3) */}
         <div className="w-full md:w-1/4 px-4">
-          {/* ✅ Pass setActivePage */}
-          <Sidebar setActivePage={setActivePage} activePage={activePage}/>
+          <Sidebar setActivePage={setActivePage} activePage={activePage} />
         </div>
 
-        {/* Main Content (col-9) */}
         <div className="w-full md:w-3/4 px-4">
-          {activePage === "overview" && <Overview />}
-          {activePage === "products" && <Product />}
+          {activePage === "overview" && <Overview onGoToProduct={goToProduct} />}
+
+          {activePage === "products" && (
+            <Product
+              initialView={productView}
+              initialSelected={productSelected}
+              onBackToList={() => setProductView("list")}
+            />
+          )}
+
           {activePage === "billing" && <Billing />}
           {activePage === "leed" && <Leads />}
           {activePage === "chat" && <Chat />}
@@ -34,5 +60,3 @@ function DashboardPage() {
     </div>
   );
 }
-
-export default DashboardPage;
