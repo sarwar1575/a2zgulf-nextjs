@@ -50,7 +50,7 @@ export default function Source() {
           font-regular text-[16px] leading-[22px] 
          tracking-[0] align-middle">{f.desc}</p>
                 <div className="mt-auto flex gap-4">
-                  <button  class="w-[164px] h-[48px] max-w-[320px] rounded-full border 
+                  <button  className="w-[164px] h-[48px] max-w-[320px] rounded-full border 
          border-gray-400 px-[21px] py-[1px] opacity-100">Watch video</button>
                   <button>Learn more</button>
                 </div>

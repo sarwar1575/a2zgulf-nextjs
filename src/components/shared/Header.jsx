@@ -16,14 +16,14 @@ function Header() {
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-const handleLogout = async () => {
-  try {
-    await dispatch(logoutUser()).unwrap(); // Ensures redux state updates
-    setDropdownOpen(false); // close dropdown
-  } catch (err) {
-    console.error("Logout failed:", err);
-  }
-};
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap(); // Ensures redux state updates
+      setDropdownOpen(false); // close dropdown
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   return (
     <section className="navbar">
@@ -43,6 +43,7 @@ const handleLogout = async () => {
           </div>
           <div className="lg:col-span-6 pb-0">
             <div className="flex items-center gap-6 float-right">
+              {/* Deliver to */}
               <div>
                 <span className="text-xs font-normal text-[#222222]">Deliver to:</span>
                 <div className="countryLists flex items-center gap-1">
@@ -56,6 +57,8 @@ const handleLogout = async () => {
                   <p className="text-sm font-semibold text-[#222222]">SA</p>
                 </div>
               </div>
+
+              {/* Language */}
               <div className="languageFilter">
                 <div className="lagn__us flex items-center gap-1">
                   <Image
@@ -68,6 +71,8 @@ const handleLogout = async () => {
                   <p className="text-sm font-normal text-[#222222]">English-Riyal</p>
                 </div>
               </div>
+
+              {/* Cart */}
               <div className="cart">
                 <Link href="">
                   <Image
@@ -80,29 +85,36 @@ const handleLogout = async () => {
                 </Link>
               </div>
 
+              {/* User Dropdown / Sign In */}
               {user ? (
                 <div className="relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 text-sm font-normal text-[#222222] border border-gray-300 px-4 py-2 rounded-full"
                   >
-                    {user.name.split(" ").map((n) => n[0]).join("")} {/* GA */}
+                    {user.name.split(" ").map((n) => n[0]).join("")}
                     <span className="ml-1">▼</span>
                   </button>
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                      <Link
+                        href="/dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Dashboard
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Logout
                       </button>
-                      <Link href="/dashboard">Dashboard</Link>
                     </div>
                   )}
                 </div>
               ) : (
                 <>
+                  {/* Normal User Sign In */}
                   <div className="sign__in cursor-pointer" onClick={handleOpen}>
                     <div className="flex items-center gap-1">
                       <Image src="/assets/icon/signIng.png" alt="Sign in" width={17} height={20} />
@@ -114,12 +126,23 @@ const handleLogout = async () => {
                       Create account
                     </button>
                   </div>
+
+                  {/* 🔹 Admin Sign In Button */}
+                  <div className="sign__in">
+                    <Link
+                      href="/admin/signin"
+                      className="text-sm font-semibold text-white bg-[#222222] px-[20px] py-[8px] rounded-full"
+                    >
+                      Admin Login
+                    </Link>
+                  </div>
                 </>
               )}
             </div>
           </div>
         </div>
 
+        {/* bottom nav */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           <div className="lg:col-span-5 pb-3">
             <div className="flex items-center gap-6">
@@ -163,17 +186,18 @@ const handleLogout = async () => {
                 <p className="text-sm font-normal text-[#222222]">Become a supplier</p>
               </div>
               {!user && (
-              <Link
-                href="/supplierform"
-                className="text-sm font-semibold text-[#222222] bg-[#38CBFF] px-[30px] py-[5px] rounded-full"
-              >
-                Become a supplier
-              </Link>
-            )}
+                <Link
+                  href="/supplierform"
+                  className="text-sm font-semibold text-[#222222] bg-[#38CBFF] px-[30px] py-[5px] rounded-full"
+                >
+                  Become a supplier
+                </Link>
+              )}
             </div>
           </div>
         </div>
       </div>
+
       <SigninModal show={showModal} handleClose={handleClose} />
     </section>
   );
