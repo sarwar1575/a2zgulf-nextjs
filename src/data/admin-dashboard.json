@@ -13,34 +13,61 @@
     { "label": "Total Roles", "value": 17017 },
     { "label": "Total Orders", "value": 17017 }
   ],
-  "sparkline": [12, 28, 22, 36, 40, 55, 49, 61, 73, 88, 60, 45],
+  "sparkline": [12, 25, 18, 30, 28, 36, 22, 40, 48, 60, 38, 25],
   "suppliers": [
     {
       "company": "Technogigz Pvt.Ltd",
-      "regNo": "TECIND2467890GJZ",
-      "vatNo": "ND3420",
+      "regNo": "TGENC264769302GZ",
+      "vatNo": "NG2640",
       "phone": "9090909090",
-      "email": "abc@mgmail.com",
-      "nationalAddress": "ND3420",
+      "email": "info@technogigz.com",
+      "nationalAddress": "NG2640",
       "status": "Verified"
     },
     {
       "company": "Technogigz Pvt.Ltd",
-      "regNo": "TECIND2467890GJZ",
-      "vatNo": "ND3420",
+      "regNo": "TGENC264769302GZ",
+      "vatNo": "NG2640",
       "phone": "9090909090",
-      "email": "abc@mgmail.com",
-      "nationalAddress": "ND3420",
+      "email": "info@technogigz.com",
+      "nationalAddress": "NG2640",
       "status": "Not Verified"
     },
     {
       "company": "Technogigz Pvt.Ltd",
-      "regNo": "TECIND2467890GJZ",
-      "vatNo": "ND3420",
+      "regNo": "TGENC264769302GZ",
+      "vatNo": "NG2640",
       "phone": "9090909090",
-      "email": "abc@mgmail.com",
-      "nationalAddress": "ND3420",
+      "email": "info@technogigz.com",
+      "nationalAddress": "NG2640",
+      "status": "Verified"
+    },
+    {
+      "company": "Technogigz Pvt.Ltd",
+      "regNo": "TGENC264769302GZ",
+      "vatNo": "NG2640",
+      "phone": "9090909090",
+      "email": "info@technogigz.com",
+      "nationalAddress": "NG2640",
       "status": "Pending"
     }
+  ,
+{
+  "realtimeOverview": [
+    { "label": "Total Suppliers", "value": 17017 },
+    { "label": "Verified Suppliers", "value": 17017 },
+    { "label": "Not Verified", "value": 17017 },
+    { "label": "Total Products", "value": 17017 },
+    { "label": "In Stock", "value": 17017 },
+    { "label": "Out of Stock", "value": 17017 },
+    { "label": "Total Articles", "value": 120 },
+    { "label": "Total Users", "value": 10 },
+    { "label": "Total Revenue", "value": 17017450 },
+    { "label": "Total ERP", "value": 17017 },
+    { "label": "Total Roles", "value": 17017 },
+    { "label": "Total Orders", "value": 17017 }
   ]
+}
+]
+
 }

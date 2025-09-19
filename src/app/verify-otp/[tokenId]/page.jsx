@@ -1,14 +1,8 @@
 "use client";
 
-import VerifyOtp from "../../../components/auth/VerifyOtp"; // path must be correct
+import VerifyOtp from "@/components/auth/VerifyOtp";
 
-import { useParams } from "next/navigation";
-
-export default function VerifyOtpPage() {
-  const params = useParams();
-  const tokenId = params?.tokenId;
-
-  if (!tokenId) return <div className="p-4 text-gray-500">Missing token...</div>;
-
+export default function VerifyOtpPage({ params }) {
+  const tokenId = params?.tokenId || "";
   return <VerifyOtp tokenId={tokenId} />;
 }

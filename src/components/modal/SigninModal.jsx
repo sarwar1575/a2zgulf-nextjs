@@ -46,7 +46,7 @@ function SigninModal({ show, handleClose }) {
         </button>
 
         <h2 className="text-3xl font-bold text-center text-gray-900">
-          Welcome Back Seller
+          Welcome Back !
         </h2>
         <p className="text-center text-gray-600 mt-2 mb-6 text-lg">Sign In</p>
 

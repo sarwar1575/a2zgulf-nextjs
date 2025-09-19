@@ -1,5 +1,0 @@
-[
-  { "title": "Company Registration No", "required": false },
-  { "title": "VAT No", "required": false },
-  { "title": "National Address *", "required": true }
-]

@@ -12,6 +12,8 @@ const nextConfig = {
       { source: '/seller/dashboard', destination: '/dashboard', permanent: false },
     ];
   },
+ 
+
   
   
 };

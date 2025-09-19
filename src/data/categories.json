@@ -1,0 +1,11 @@
+[
+  { "name": "Environment","Subname":"Environment", "status": "Active" },
+  { "name": "Consumer Electronics", "Subname":"Environment","status": "Inactive" },
+  { "name": "Home & Garden","Subname":"Environment", "status": "Active" },
+  { "name": "Commercial Equipment & Machinery","Subname":"Environment", "status": "Inactive" },
+  { "name": "Beauty", "Subname":"Environment","status": "Active" },
+  { "name": "Jewelry, Eyewear, Watches & Accessories","Subname":"Environment", "status": "Active" },
+  { "name": "Industrial Machinery", "Subname":"Environment","status": "Inactive" },
+  { "name": "Furniture", "Subname":"Environment","status": "Active" },
+  { "name": "Business Services","Subname":"Environment", "status": "Inactive" }
+]

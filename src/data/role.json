@@ -1,0 +1,13 @@
+[
+  { "role": "Admin", "status": "Active" },
+  { "role": "Super Admin", "status": "Inactive" },
+  { "role": "Seller", "status": "Active" },
+  { "role": "Admin", "status": "Inactive" },
+  { "role": "Buyer", "status": "Active" },
+  { "role": "Admin", "status": "Inactive" },
+  { "role": "Admin", "status": "Active" },
+  { "role": "Admin", "status": "Active" },
+  { "role": "Admin", "status": "Inactive" },
+  { "role": "Admin", "status": "Active" },
+  { "role": "Admin", "status": "Inactive" }
+]

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import FormBanner from './FormBanner';
@@ -18,8 +18,8 @@ const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.a2zgulf.c
 const URLS = {
   REGISTER: `${API_BASE}/auth/register`,                         // POST
   LOGIN: `${API_BASE}/auth/login`,                               // POST
-  VERIFY_OTP: (tokenId) => `${API_BASE}/auth/verify/${tokenId}`, // POST { code }
-  REGENERATE_OTP: `${API_BASE}/auth/verify/regenerate`,          // PUT (Bearer)
+  VERIFY_OTP: (tokenId) => `${API_BASE}/auth/verify/${tokenId}`, // POST { code }  (handled on VerifyOtp page)
+  REGENERATE_OTP: `${API_BASE}/auth/verify/regenerate`,          // PUT (Bearer)   (handled on VerifyOtp page if needed)
   COUNTRIES: `${API_BASE}/core/countries`,                       // GET
   COUNTRY_FILETYPES: (code) => `${API_BASE}/core/countries/${encodeURIComponent(code)}/filetypes`, // GET
   PROFILE: `${API_BASE}/users/profile`,                          // GET (Bearer) optional
@@ -30,15 +30,36 @@ const DASHBOARD_PATH = '/dashboard';
 const saveToken = (t) => { try { if (t) localStorage.setItem('ACCESS_TOKEN', t); } catch {} };
 const getToken  = () => { try { return localStorage.getItem('ACCESS_TOKEN') || ''; } catch { return ''; } };
 
+/* utilities */
+const looksLikeExistsMessage = (m = '') => {
+  const msg = String(m).toLowerCase();
+  return (
+    msg.includes('already exist') ||
+    msg.includes('already_exists') ||
+    msg.includes('exists') ||
+    msg.includes('email already') ||
+    msg.includes('user already')
+  );
+};
+const looksLikeInvalidPassword = (m = '') => {
+  const s = String(m).toLowerCase();
+  return s.includes('invalid password') || s.includes('wrong password') || s.includes('invalid credentials');
+};
+const looksLikeUserNotFound = (m = '') => {
+  const s = String(m).toLowerCase();
+  return s.includes('user not found') || s.includes('no user') || s.includes('account not found') || s.includes('email not found');
+};
+
 /* ======================
    MAIN COMPONENT
    ====================== */
 export default function Form() {
   const router = useRouter();
+  const search = useSearchParams();
   const dispatch = useDispatch();
   const { token, error: reduxError } = useSelector((s) => s.auth || {});
 
-  // Steps: email -> password -> signup -> otp -> erp
+  // Steps: email -> password -> signup -> erp (OTP is handled on separate page)
   const [step, setStep] = useState('email');
 
   // Shared UI
@@ -62,43 +83,35 @@ export default function Form() {
   const [countryCode, setCountryCode] = useState('');
   const [docFields, setDocFields] = useState([]);
 
-  // OTP step
-  const [pendingTokenId, setPendingTokenId] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const otpRefs = useRef([]);
-  const [resendTimer, setResendTimer] = useState(30);
+  // Phone (UI only)
+  const [dialCode, setDialCode] = useState(''); // like +965 (from countries API)
+  const [phone, setPhone] = useState('');
+  const fullPhone = useMemo(() => {
+    const d = (dialCode || '').trim();
+    const p = (phone || '').replace(/[^\d]/g, '');
+    return d && p ? `${d}${p}` : p || '';
+  }, [dialCode, phone]);
 
   // ERP step
   const [selectedERP, setSelectedERP] = useState(null);
   const [connectingERP, setConnectingERP] = useState(false);
   const [connectError, setConnectError] = useState('');
 
+  /* =========
+     Handle return from VerifyOtp page
+     If VerifyOtp page redirects back like /become-seller?step=erp&email=abc@x.com
+     this will open the ERP step.
+  ========= */
+  useEffect(() => {
+    const stepQ = search.get('step');
+    const emailQ = search.get('email');
+    if (emailQ) setEmail(emailQ);
+    if (stepQ === 'erp') setStep('erp');
+  }, [search]);
+
   /* ======================
      EMAIL → robust existence check
      ====================== */
-
-  const looksLikeExistsMessage = (m = '') => {
-    const msg = String(m).toLowerCase();
-    return (
-      msg.includes('already exist') ||
-      msg.includes('already_exists') ||
-      msg.includes('exists') ||
-      msg.includes('email already') ||
-      msg.includes('user already')
-    );
-  };
-
-  const looksLikeInvalidPassword = (m = '') => {
-    const s = String(m).toLowerCase();
-    return s.includes('invalid password') || s.includes('wrong password') || s.includes('invalid credentials');
-  };
-
-  const looksLikeUserNotFound = (m = '') => {
-    const s = String(m).toLowerCase();
-    return s.includes('user not found') || s.includes('no user') || s.includes('account not found') || s.includes('email not found');
-  };
-
-  // Fallback: try login with dummy password to infer existence
   const probeByLoginDummy = async (probeEmail) => {
     const resp = await axios.post(
       URLS.LOGIN,
@@ -118,7 +131,7 @@ export default function Form() {
 
     setBusy(true);
     try {
-      // Primary probe via REGISTER (as requested)
+      // Primary probe via REGISTER (backend may 409 for existing)
       const res = await axios.post(
         URLS.REGISTER,
         { email, checkOnly: true },
@@ -129,7 +142,7 @@ export default function Form() {
 
       if (status === 409 || looksLikeExistsMessage(msg)) { setStep('password'); return; }
 
-      if (status === 422 || status === 400) { // validation path → fallback probe
+      if (status === 422 || status === 400) {
         const exists = await probeByLoginDummy(email);
         setStep(exists ? 'password' : 'signup');
         return;
@@ -139,8 +152,7 @@ export default function Form() {
 
       const exists = await probeByLoginDummy(email);
       setStep(exists ? 'password' : 'signup');
-    } catch (err) {
-      console.error(err);
+    } catch {
       try {
         const exists = await probeByLoginDummy(email);
         setStep(exists ? 'password' : 'signup');
@@ -177,7 +189,6 @@ export default function Form() {
 
       router.replace(DASHBOARD_PATH);
     } catch (err) {
-      console.error(err);
       const msg = err?.response?.data?.message || 'Login failed. Please check your credentials.';
       setNotice(msg);
     } finally {
@@ -186,7 +197,7 @@ export default function Form() {
   };
 
   /* =========================
-     SIGNUP (NEW) → REGISTER → OTP
+     SIGNUP (NEW) → REGISTER → redirect to VerifyOtp page
      ========================= */
   useEffect(() => {
     if (step !== 'signup') return;
@@ -194,29 +205,38 @@ export default function Form() {
     (async () => {
       try {
         const res = await axios.get(URLS.COUNTRIES);
-        if (!abort) setCountryList(Array.isArray(res?.data?.data) ? res.data.data : []);
-      } catch (e) {
-        console.error('Countries fetch failed', e);
+        const list = Array.isArray(res?.data?.data) ? res.data.data : [];
+        if (!abort) {
+          setCountryList(list);
+          // if user already typed country before refresh, sync dial code
+          const found = list.find((c) => c.code === countryCode);
+          if (found?.extension) setDialCode(found.extension);
+        }
+      } catch {
         if (!abort) setCountryList([]);
       }
     })();
     return () => { abort = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   useEffect(() => {
-    if (!countryCode) return;
+    if (!countryCode) { setDialCode(''); setDocFields([]); return; }
+
+    const found = countryList.find((c) => c.code === countryCode);
+    setDialCode(found?.extension || '');
+
     let abort = false;
     (async () => {
       try {
         const res = await axios.get(URLS.COUNTRY_FILETYPES(countryCode));
         if (!abort) setDocFields(Array.isArray(res?.data?.data) ? res.data.data : []);
-      } catch (e) {
-        console.error('Country filetypes fetch failed', e);
+      } catch {
         if (!abort) setDocFields([]);
       }
     })();
     return () => { abort = true; };
-  }, [countryCode]);
+  }, [countryCode, countryList]);
 
   const onRegisterNewUser = async () => {
     setNotice('');
@@ -226,9 +246,9 @@ export default function Form() {
     if (!signupPassword || !signupConfirmPassword) { setNotice('Please enter and confirm your password.'); return; }
     if (signupPassword !== signupConfirmPassword) { setNotice('Password and Confirm Password do not match.'); return; }
 
+    // Phone is UI-only (do NOT send to avoid 422 unless backend supports it)
     setBusy(true);
     try {
-      // IMPORTANT: do NOT send "country" to /auth/register (it causes 422)
       let tokenId = '';
       try {
         const result = await dispatch(
@@ -237,6 +257,7 @@ export default function Form() {
             email,
             password: signupPassword,
             confirmPassword: signupConfirmPassword,
+            // NOTE: intentionally NOT sending country or phone to avoid 422
           })
         ).unwrap();
         tokenId = result?.tokenId || result?.data?.tokenId || '';
@@ -250,84 +271,16 @@ export default function Form() {
         tokenId = r?.data?.tokenId || r?.data?.data?.tokenId || '';
       }
 
-      if (!tokenId) {
-        setNotice('Could not get verification token from server.');
-        setBusy(false);
-        return;
-      }
+      if (!tokenId) { setNotice('Could not get verification token from server.'); setBusy(false); return; }
 
-      setPendingTokenId(tokenId);
-      setStep('otp');
-      setOtp(['', '', '', '', '', '']);
-      setResendTimer(30);
+      // Redirect to your existing VerifyOtp page & tell it to return to ERP step
+      const next = encodeURIComponent('/become-seller?step=erp' + (email ? `&email=${encodeURIComponent(email)}` : ''));
+      router.replace(`/verify-otp/${tokenId}?next=${next}`);
     } catch (err) {
-      console.error(err);
       const msg = err?.response?.data?.message || 'Registration failed. Please try again.';
       setNotice(msg);
     } finally {
       setBusy(false);
-    }
-  };
-
-  /* =========================
-     OTP → VERIFY → ERP
-     ========================= */
-  useEffect(() => {
-    if (resendTimer > 0) {
-      const t = setTimeout(() => setResendTimer((s) => s - 1), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [resendTimer]);
-
-  const handleOtpChange = (val, idx) => {
-    const char = (val || '').slice(-1).toUpperCase().replace(/[^A-Z0-9]/g, '');
-    setOtp((prev) => {
-      const n = [...prev];
-      n[idx] = char;
-      return n;
-    });
-    if (char && idx < otpRefs.current.length - 1) otpRefs.current[idx + 1]?.focus();
-  };
-
-  const handleOtpKey = (e, idx) => {
-    if (e.key === 'Backspace' && !otp[idx] && idx > 0) otpRefs.current[idx - 1]?.focus();
-    if (e.key === 'ArrowLeft' && idx > 0) otpRefs.current[idx - 1]?.focus();
-    if (e.key === 'ArrowRight' && idx < otpRefs.current.length - 1) otpRefs.current[idx + 1]?.focus();
-  };
-
-  const onVerifyOtp = async () => {
-    setNotice('');
-    const code = otp.join('');
-    if (code.length !== 6) { setNotice('Please enter the 6-character OTP.'); return; }
-    if (!pendingTokenId) { setNotice('Missing verification token.'); return; }
-
-    setBusy(true);
-    try {
-      const resp = await axios.post(URLS.VERIFY_OTP(pendingTokenId), { code }, { withCredentials: true });
-      const access = resp?.data?.access_token || resp?.data?.token || '';
-      if (access) saveToken(access);
-      setStep('erp');
-    } catch (err) {
-      console.error(err);
-      const msg = err?.response?.data?.message || 'Invalid or expired code.';
-      setNotice(msg);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const onResendOtp = async () => {
-    setNotice('');
-    setResendTimer(30);
-    try {
-      const access = getToken();
-      await axios.put(
-        URLS.REGENERATE_OTP,
-        {},
-        { headers: { Authorization: `Bearer ${access}` }, withCredentials: true }
-      );
-    } catch (e) {
-      console.error('Resend OTP failed', e);
     }
   };
 
@@ -350,8 +303,8 @@ export default function Form() {
       const tokenToUse = getToken() || token;
       if (!tokenToUse) throw new Error('Missing auth token.');
 
-      const csrf = localStorage.getItem('X_CSRF_TOKEN') || '1';
-      const qs = new URLSearchParams({ email }).toString();
+      const csrf = (typeof window !== 'undefined' && localStorage.getItem('X_CSRF_TOKEN')) || '1';
+      const qs = new URLSearchParams(email ? { email } : {}).toString();
 
       const resp = await fetch(`/api/erp-auth/${provider}/start${qs ? `?${qs}` : ''}`, {
         method: 'GET',
@@ -371,6 +324,7 @@ export default function Form() {
       if (!startUrl) throw new Error('OAuth URL missing from server.');
 
       window.location.assign(startUrl);
+      // Fallback redirect to dashboard (in case backend already redirects after OAuth)
       setTimeout(() => router.replace(redirectAfter || DASHBOARD_PATH), 2000);
     } catch (e) {
       setConnectError(e?.message || 'Failed to start ERP OAuth');
@@ -438,8 +392,7 @@ export default function Form() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full border border-[#cccc] rounded-lg px-4 py-3 text-sm text-[#2B2F2
-                        2] focus:outline-none"
+                        className="w-full border border-[#cccc] rounded-lg px-4 py-3 text-sm text-[#2B2F32] focus:outline-none"
                         placeholder="Password"
                         autoFocus
                       />
@@ -509,7 +462,32 @@ export default function Form() {
                           </option>
                         ))}
                       </select>
-                      <p className="text-xs text-[#666] mt-1">We’ll auto-update the required document fields for your country.</p>
+                      <p className="text-xs text-[#666] mt-1">We’ll auto-update the required document fields and phone code.</p>
+                    </div>
+
+                    {/* Phone with dynamic country code (UI only) */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-semibold mb-1">Mobile Number</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={dialCode}
+                          disabled
+                          className="w-28 border border-[#cccc] rounded-lg px-3 py-3 text-sm bg-gray-100"
+                          placeholder="+XXX"
+                          aria-label="Country dial code"
+                        />
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, '').slice(0, 15))}
+                          className="flex-1 border border-[#cccc] rounded-lg px-4 py-3 text-sm focus:outline-none"
+                          placeholder="Phone number"
+                          aria-label="Phone number"
+                        />
+                      </div>
+                      {!!fullPhone && <p className="text-xs text-[#777] mt-1">Formatted: {fullPhone}</p>}
                     </div>
 
                     {!!countryCode && (
@@ -574,66 +552,6 @@ export default function Form() {
                       <p className="text-red-500 text-sm mt-3 text-center">{notice || reduxError}</p>
                     )}
                   </>
-                )}
-
-                {/* OTP */}
-                {step === 'otp' && (
-                  <div className="py-[80px] px-[10px]">
-                    <h6 className="text-[28px] font-semibold text-[#3B3B3B] pb-4 text-center">OTP Verification</h6>
-                    <p className="text-[14px] font-medium text-[#2B2F32] pb-5 text-center">
-                      Enter the 6-character code sent to <strong>{email}</strong>
-                    </p>
-
-                    <div className="flex flex-col items-center gap-6">
-                      <div className="flex justify-between w-full max-w-xs">
-                        {otp.map((d, i) => (
-                          <input
-                            key={i}
-                            ref={(el) => (otpRefs.current[i] = el)}
-                            type="text"
-                            inputMode="text"
-                            maxLength={1}
-                            value={d}
-                            onChange={(e) => handleOtpChange(e.target.value, i)}
-                            onKeyDown={(e) => handleOtpKey(e, i)}
-                            className="w-12 h-12 text-center text-xl border border-[#5570F1] rounded-lg focus:outline-none"
-                          />
-                        ))}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={onVerifyOtp}
-                        className="w-full rounded-xl bg-[#38CBFF] py-4 text-[20px] font-bold text-[#2B2F32] hover:opacity-90 transition"
-                        disabled={busy}
-                      >
-                        {busy ? 'Verifying…' : 'Verify OTP'}
-                      </button>
-
-                      <div className="text-[14px] font-medium text-[#000000]">
-                        Didn’t receive the code?{' '}
-                        {resendTimer > 0 ? (
-                          <span className="text-[#38CBFF] text-[14px] font-bold">Resend in {resendTimer}s</span>
-                        ) : (
-                          <button type="button" onClick={onResendOtp} className="text-[#38CBFF] text-[14px] font-bold underline">
-                            Resend OTP
-                          </button>
-                        )}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="w-full rounded-xl bg-[#F2F4F7] py-3 text-[16px] font-semibold text-[#2B2F32] hover:opacity-90 transition"
-                        onClick={() => setStep('signup')}
-                      >
-                        Back
-                      </button>
-
-                      {(notice || reduxError) && (
-                        <p className="text-red-500 text-sm mt-2 text-center">{notice || reduxError}</p>
-                      )}
-                    </div>
-                  </div>
                 )}
 
                 {/* ERP */}

@@ -172,9 +172,9 @@ export default function SigninForm({ onSuccess }) {
 
       const role = result?.role || result?.data?.role || result?.user?.role || result?.data?.user?.role;
       const r = role?.toLowerCase();
-      if (r === "seller") router.replace("/seller/dashboard");
+      if (r === "seller") router.replace("/dashboard");
       else if (r === "buyer") router.replace("/");
-      else router.replace("/dashboard");
+      else router.replace("/");
     } catch (err) {
       setError(normMsg(err));
     } finally {

@@ -121,11 +121,7 @@ function Header() {
                       <p className="text-sm font-normal text-[#222222]">Sign in</p>
                     </div>
                   </div>
-                  <div className="sign__in">
-                    <button className="text-sm font-semibold text-[#222222] bg-[#F3C0C8] px-[30px] py-[8px] rounded-full">
-                      Create account
-                    </button>
-                  </div>
+                 
 
                   {/* 🔹 Admin Sign In Button */}
                   <div className="sign__in">
@@ -183,14 +179,14 @@ function Header() {
                 <p className="text-sm font-normal text-[#222222]">App & extension</p>
               </div>
               <div>
-                <p className="text-sm font-normal text-[#222222]">Become a supplier</p>
+                <p className="text-sm font-normal text-[#222222]">Become a seller</p>
               </div>
               {!user && (
                 <Link
                   href="/supplierform"
                   className="text-sm font-semibold text-[#222222] bg-[#38CBFF] px-[30px] py-[5px] rounded-full"
                 >
-                  Become a supplier
+                  Become a seller
                 </Link>
               )}
             </div>
